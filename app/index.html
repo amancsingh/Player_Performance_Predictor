@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cricket Insights</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .spinner {
+            border-top-color: #06b6d4; /* cyan-500 */
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .menu-hidden {
+            transform: translateX(-100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+
+    <!-- Top Navigation Bar (Unchanged) -->
+    <nav class="bg-gray-800 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <button id="menu-btn" class="text-gray-300 hover:text-white focus:outline-none">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                        </svg>
+                    </button>
+                    <span id="home-title-link" class="text-xl font-bold text-cyan-400 ml-4 cursor-pointer">Cricket Insights</span>
+                </div>
+                <div class="flex items-center">
+                    <button id="login-nav-btn" class="flex items-center text-gray-300 hover:text-white">
+                         <span id="user-greeting" class="hidden mr-2"></span>
+                        <svg class="h-8 w-8" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0012 11z" clip-rule="evenodd"></path></svg>
+                        <span class="ml-2 font-medium" id="login-text">Login</span>
+                    </button>
+                     <button id="logout-btn" class="hidden ml-4 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Side Menu (Unchanged) -->
+    <div id="side-menu" class="fixed top-0 left-0 h-full w-64 bg-gray-800 shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out">
+        <div class="p-4">
+            <h2 class="text-2xl font-bold text-cyan-400 border-b border-gray-700 pb-2">Menu</h2>
+            <ul class="mt-4 space-y-2">
+                <li><a href="#landing" class="nav-link block p-2 rounded-lg hover:bg-gray-700">Home</a></li>
+                <li><a href="#predictor" class="nav-link block p-2 rounded-lg hover:bg-gray-700">Performance Predictor</a></li>
+                <li><a href="#best11" class="nav-link block p-2 rounded-lg hover:bg-gray-700">Best Playing XI</a></li>
+                <li><a href="#history" id="history-link-mobile" class="nav-link block p-2 rounded-lg hover:bg-gray-700 hidden">Prediction History</a></li>
+                <li><a href="#about" class="nav-link block p-2 rounded-lg hover:bg-gray-700">About</a></li>
+            </ul>
+        </div>
+    </div>
+    <div id="menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+
+    <!-- Main Content Area (Unchanged until Best XI Page) -->
+    <main class="flex-grow">
+        <section id="landing-page" class="page flex flex-col items-center justify-center text-center p-8 min-h-[calc(100vh-64px)] bg-cover bg-center" style="background-image: linear-gradient(rgba(17, 24, 39, 0.8), rgba(17, 24, 39, 0.8)), url('https://placehold.co/1200x800/111827/334155?text=Cricket+Stadium');">
+             <div class="max-w-4xl bg-gray-900 bg-opacity-50 p-8 rounded-2xl">
+                <h1 class="text-4xl md:text-5xl font-extrabold text-white">Predicting Cricket Player Performance</h1>
+                <p class="mt-4 text-md md:text-lg text-gray-300">Leverage advanced machine learning models to forecast player performance in upcoming matches. Make informed decisions with data-driven insights.</p>
+                <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-gray-800 p-6 rounded-lg text-left">
+                        <h2 class="text-2xl font-bold text-cyan-400">Player Performance Predictor</h2>
+                        <p class="mt-2 text-gray-400">Get detailed performance predictions for individual players, including batting average, strike rate, and bowling economy.</p>
+                        <button onclick="showPage('predictor-page')" class="mt-4 bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">Predict Now</button>
+                    </div>
+                     <div class="bg-gray-800 p-6 rounded-lg text-left">
+                        <h2 class="text-2xl font-bold text-cyan-400">Best Playing XI Chooser</h2>
+                        <p class="mt-2 text-gray-400">Optimize your team selection with our AI-powered tool that suggests the best possible playing 11 based on player performance predictions.</p>
+                        <button onclick="showPage('best11-page')" class="mt-4 bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">Choose Now</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="predictor-page" class="page hidden p-4 md:p-8 flex items-center justify-center min-h-[calc(100vh-64px)]">
+            <div class="w-full max-w-6xl bg-gray-800 rounded-2xl shadow-lg p-6 md:p-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="space-y-6">
+                    <div class="text-center lg:text-left">
+                        <h1 class="text-3xl md:text-4xl font-bold text-cyan-400">Performance Predictor</h1>
+                        <p class="text-gray-400 mt-2">Fill in the details below to get a prediction.</p>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="match_format" class="block text-sm font-medium text-gray-300 mb-1">Match Format</label>
+                            <select id="match_format" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500">
+                                <option value="T20">T20</option> <option value="ODI">ODI</option> <option value="Test">Test</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="player" class="block text-sm font-medium text-gray-300 mb-1">Player Name</label>
+                            <input type="text" id="player" list="player_list" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" placeholder="e.g., V Kohli">
+                            <datalist id="player_list"></datalist>
+                        </div>
+                        <div>
+                            <label for="venue" class="block text-sm font-medium text-gray-300 mb-1">Venue (Optional)</label>
+                            <input type="text" id="venue" list="venue_list" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" placeholder="e.g., Eden Gardens, Kolkata">
+                            <datalist id="venue_list"></datalist>
+                        </div>
+                        <div>
+                            <label for="opposition" class="block text-sm font-medium text-gray-300 mb-1">Opposition Team (Optional)</label>
+                            <input type="text" id="opposition" list="team_list" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" placeholder="e.g., Australia">
+                            <datalist id="team_list"></datalist>
+                        </div>
+                    </div>
+                    <button id="predict-btn" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 flex items-center justify-center"> Predict Performance </button>
+                </div>
+                <div class="space-y-6">
+                    <div id="results" class="text-center space-y-4 opacity-0 transition-opacity duration-500">
+                         <h2 class="text-2xl font-semibold text-gray-200">Prediction Result</h2>
+                         <div id="spinner" class="spinner w-8 h-8 rounded-full border-4 mx-auto hidden"></div>
+                         <div id="result-content" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                             <div class="bg-gray-700 p-4 rounded-lg">
+                                 <h3 class="text-lg font-medium text-cyan-400">Predicted Runs Bin</h3>
+                                 <p id="runs-prediction" class="text-2xl font-bold mt-2">-</p>
+                             </div>
+                             <div class="bg-gray-700 p-4 rounded-lg">
+                                 <h3 class="text-lg font-medium text-cyan-400">Predicted Wickets Bin</h3>
+                                 <p id="wickets-prediction" class="text-2xl font-bold mt-2">-</p>
+                             </div>
+                         </div>
+                    </div>
+                    <div id="batting-chart-container" class="bg-gray-700 p-4 rounded-lg hidden">
+                        <h3 class="text-lg font-medium text-center text-cyan-400 mb-4">Recent Batting Performance</h3>
+                        <canvas id="battingStatsChart"></canvas>
+                    </div>
+                    <div id="bowling-chart-container" class="bg-gray-700 p-4 rounded-lg hidden">
+                        <h3 class="text-lg font-medium text-center text-cyan-400 mb-4">Recent Bowling Performance</h3>
+                        <canvas id="bowlingStatsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Page: Best Playing XI -->
+        <section id="best11-page" class="page hidden p-4 md:p-8 flex items-center justify-center min-h-[calc(100vh-64px)]">
+             <div class="w-full max-w-6xl bg-gray-800 rounded-2xl shadow-lg p-6 md:p-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+                 <div class="space-y-6">
+                    <div class="text-center lg:text-left">
+                        <h1 class="text-3xl md:text-4xl font-bold text-cyan-400">Best Playing XI Selector</h1>
+                        <p class="text-gray-400 mt-2">Build your squad to find the optimal lineup.</p>
+                    </div>
+                    <div class="space-y-2">
+                        <label for="squad-player-input" class="block text-sm font-medium text-gray-300">Add Player to Squad</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="squad-player-input" list="player_list" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-cyan-500" placeholder="Search and add up to 30 players">
+                            <button id="add-squad-player-btn" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-lg transition shrink-0">Add</button>
+                        </div>
+                    </div>
+                    <div id="squad-list-container" class="bg-gray-700 rounded-lg p-4 space-y-2 h-48 overflow-y-auto"></div>
+                     <div class="space-y-4">
+                        <div>
+                            <label for="best11_match_format" class="block text-sm font-medium text-gray-300 mb-1">Match Format</label>
+                            <select id="best11_match_format" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500">
+                                <option value="T20">T20</option> <option value="ODI">ODI</option> <option value="Test">Test</option>
+                            </select>
+                        </div>
+                        <label for="best11_venue" class="block text-sm font-medium text-gray-300">Venue (Optional)</label>
+                        <input type="text" id="best11_venue" list="venue_list" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-cyan-500" placeholder="e.g., Eden Gardens, Kolkata">
+                        <label for="best11_opposition" class="block text-sm font-medium text-gray-300 mt-2">Opposition Team (Optional)</label>
+                        <input type="text" id="best11_opposition" list="team_list" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-cyan-500" placeholder="e.g., Australia">
+                    </div>
+                    <button id="best11-btn" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-4 rounded-lg transition">Find Best XI</button>
+                 </div>
+                 <div class="space-y-6 flex flex-col">
+                      <h2 class="text-2xl font-semibold text-gray-200 text-center">Your Optimal Team</h2>
+                      <div id="best11-spinner" class="spinner w-8 h-8 rounded-full border-4 mx-auto hidden"></div>
+                      <div id="best11-results" class="bg-gray-700 rounded-lg p-4 flex-grow">
+                          <!-- CHANGED THIS LINE: Replaced <ol> with <div> for better styling control -->
+                          <div id="best11-list" class="space-y-2 text-lg"></div>
+                      </div>
+                 </div>
+             </div>
+        </section>
+        <section id="about-page" class="page hidden p-4 md:p-8 flex items-center justify-center min-h-[calc(100vh-64px)]">
+             <div class="w-full max-w-3xl bg-gray-800 rounded-2xl shadow-lg p-6 md:p-8 space-y-6">
+                <div class="text-center">
+                    <h1 class="text-3xl md:text-4xl font-bold text-cyan-400">About This Project</h1>
+                </div>
+                <p class="text-gray-300 text-lg"> This Cricket Performance Predictor is a culmination of a passion for cricket and a deep dive into the world of machine learning. The goal of this project is to move beyond simple historical averages and create a more nuanced prediction tool that considers various factors influencing a player's performance. </p>
+                 <p class="text-gray-300 text-lg"> The core of the application is powered by several machine learning models trained on extensive historical cricket data. These models analyze patterns related to player form, venue statistics, and opposition strength to forecast performance in terms of runs and wickets. </p>
+                 <p class="text-gray-300 text-lg"> The "Best Playing XI" feature extends this predictive power, employing an algorithm to not only predict individual performances but also to assemble a balanced and potent team from a given squad. This is a college project aimed at exploring the practical applications of data science in sports analytics. </p>
+            </div>
+        </section>
+        <section id="history-page" class="page hidden p-4 md:p-8 flex items-center justify-center min-h-[calc(100vh-64px)]">
+            <div class="w-full max-w-4xl bg-gray-800 rounded-2xl shadow-lg p-6 md:p-8 space-y-6">
+                <div class="text-center">
+                    <h1 class="text-3xl md:text-4xl font-bold text-cyan-400">Prediction History</h1>
+                    <p class="text-gray-400 mt-2">Your recent predictions are saved here.</p>
+                </div>
+                <div id="history-container" class="space-y-4"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Login/Signup Overlay (Unchanged) -->
+    <div id="login-overlay" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden">
+        <div class="bg-gray-800 p-8 rounded-2xl shadow-lg w-full max-w-sm relative">
+            <button id="close-login" class="absolute top-4 right-4 text-gray-400 hover:text-white">&times;</button>
+            <h2 id="login-title" class="text-2xl font-bold text-center text-cyan-400 mb-6">Login</h2>
+            <div id="auth-error" class="text-red-400 text-center mb-4 hidden"></div>
+            <form id="login-form" class="space-y-4">
+                <input type="email" id="email" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-cyan-500" placeholder="Email" required>
+                <input type="password" id="password" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-cyan-500" placeholder="Password" required>
+                <button type="submit" id="auth-submit-btn" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 rounded-lg transition">Login</button>
+            </form>
+            <p class="text-center text-sm text-gray-400 mt-4">
+                <span id="login-prompt">Don't have an account?</span>
+                <button id="toggle-auth" class="text-cyan-400 hover:underline">Sign Up</button>
+            </p>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let battingChart = null;
+            let bowlingChart = null;
+            let isLogin = true;
+
+            // --- AUTHENTICATION (Unchanged) ---
+            const loginForm = document.getElementById('login-form');
+            const authError = document.getElementById('auth-error');
+            const logoutBtn = document.getElementById('logout-btn');
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                authError.classList.add('hidden');
+                const url = isLogin ? '/api/login' : '/api/register';
+                fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        if (isLogin) { updateUIAfterLogin(email); } 
+                        else { alert('Registration successful! Please log in.'); toggleAuthView(true); }
+                    } else {
+                        authError.textContent = data.message;
+                        authError.classList.remove('hidden');
+                    }
+                }).catch(err => {
+                    authError.textContent = 'An error occurred. Please try again.';
+                    authError.classList.remove('hidden');
+                });
+            });
+            logoutBtn.addEventListener('click', () => { fetch('/api/logout', { method: 'POST' }).then(() => updateUIAfterLogout()); });
+            function checkAuthStatus() { fetch('/api/check_auth').then(res => res.json()).then(data => { if (data.logged_in) { updateUIAfterLogin(data.email); } }); }
+            function updateUIAfterLogin(email) {
+                document.getElementById('login-overlay').classList.add('hidden');
+                document.getElementById('login-nav-btn').classList.add('hidden');
+                document.getElementById('logout-btn').classList.remove('hidden');
+                document.getElementById('history-link-mobile').classList.remove('hidden');
+                document.getElementById('user-greeting').textContent = `Hi, ${email.split('@')[0]}`;
+                document.getElementById('user-greeting').classList.remove('hidden');
+            }
+            function updateUIAfterLogout() {
+                document.getElementById('login-nav-btn').classList.remove('hidden');
+                document.getElementById('logout-btn').classList.add('hidden');
+                document.getElementById('history-link-mobile').classList.add('hidden');
+                document.getElementById('user-greeting').classList.add('hidden');
+                showPage('landing-page');
+            }
+            function toggleAuthView(forceLogin = false) {
+                 if (forceLogin) { isLogin = true; } else { isLogin = !isLogin; }
+                 document.getElementById('login-title').textContent = isLogin ? 'Login' : 'Sign Up';
+                 document.getElementById('auth-submit-btn').textContent = isLogin ? 'Login' : 'Create Account';
+                 document.getElementById('login-prompt').textContent = isLogin ? "Don't have an account?" : "Already have an account?";
+                 document.getElementById('toggle-auth').textContent = isLogin ? 'Sign Up' : 'Login';
+                 document.getElementById('auth-error').classList.add('hidden');
+            }
+
+            // --- HISTORY (Unchanged) ---
+            function fetchHistory() {
+                const historyContainer = document.getElementById('history-container');
+                historyContainer.innerHTML = '<div class="spinner w-8 h-8 rounded-full border-4 mx-auto"></div>';
+                fetch('/api/history').then(res => res.json()).then(data => {
+                    historyContainer.innerHTML = '';
+                    if (data.success && data.history.length > 0) {
+                        data.history.forEach(item => {
+                            const date = new Date(item.timestamp).toLocaleString();
+                            const historyItemHTML = `<div class="bg-gray-700 p-4 rounded-lg"><p class="font-bold text-lg">${item.player} <span class="text-sm font-normal text-gray-400">- ${date}</span></p><p>vs ${item.opposition || 'N/A'} at ${item.venue || 'N/A'} (${item.match_format})</p><div class="flex gap-4 mt-2"><p>Runs: <span class="font-bold text-cyan-400">${item.predicted_runs_bin}</span></p><p>Wickets: <span class="font-bold text-cyan-400">${item.predicted_wickets_bin}</span></p></div></div>`;
+                            historyContainer.innerHTML += historyItemHTML;
+                        });
+                    } else { historyContainer.innerHTML = '<p class="text-gray-400 text-center">No history found.</p>'; }
+                }).catch(err => { historyContainer.innerHTML = '<p class="text-red-400 text-center">Could not load history.</p>'; });
+            }
+
+            // --- Predictor Page Logic (Unchanged) ---
+            const predictBtn = document.getElementById('predict-btn');
+            predictBtn.addEventListener('click', () => {
+                const payload = { match_format: document.getElementById('match_format').value, player: document.getElementById('player').value, venue: document.getElementById('venue').value, opposition: document.getElementById('opposition').value, };
+                document.getElementById('results').style.opacity = 1;
+                document.getElementById('spinner').classList.remove('hidden');
+                document.getElementById('result-content').classList.add('hidden');
+                document.getElementById('batting-chart-container').classList.add('hidden');
+                document.getElementById('bowling-chart-container').classList.add('hidden');
+                fetch('/api/predict', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+                .then(response => response.json()).then(data => {
+                    document.getElementById('runs-prediction').textContent = data.predicted_runs_bin;
+                    document.getElementById('wickets-prediction').textContent = data.predicted_wickets_bin;
+                    fetchRecentStatsAndDrawCharts(payload.player, payload.match_format);
+                }).catch(error => {
+                    document.getElementById('runs-prediction').textContent = "Error";
+                    document.getElementById('wickets-prediction').textContent = "Server Error";
+                }).finally(() => {
+                    document.getElementById('spinner').classList.add('hidden');
+                    document.getElementById('result-content').classList.remove('hidden');
+                });
+            });
+            function fetchRecentStatsAndDrawCharts(player, match_format) {
+                fetch('/api/recent_stats', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ player, match_format }) })
+                .then(response => response.json()).then(stats => { if (stats && stats.length > 0) { drawStatsCharts(stats.reverse()); }
+                }).catch(error => { console.error('Error fetching recent stats:', error); });
+            }
+            function drawStatsCharts(stats) {
+                const hasBattingStats = stats.some(s => s.runs > 0);
+                const hasBowlingStats = stats.some(s => s.wickets > 0);
+                const battingContainer = document.getElementById('batting-chart-container');
+                if (hasBattingStats) {
+                    battingContainer.classList.remove('hidden');
+                    const ctx = document.getElementById('battingStatsChart').getContext('2d');
+                    if (battingChart) battingChart.destroy();
+                    battingChart = new Chart(ctx, { type: 'bar', data: { labels: stats.map((s, i) => `Match ${i + 1}`), datasets: [{ label: 'Runs Scored', data: stats.map(s => s.runs), backgroundColor: 'rgba(54, 162, 235, 0.6)' }] }, options: { scales: { y: { beginAtZero: true } } } });
+                } else { battingContainer.classList.add('hidden'); }
+                const bowlingContainer = document.getElementById('bowling-chart-container');
+                 if (hasBowlingStats) {
+                    bowlingContainer.classList.remove('hidden');
+                    const ctx = document.getElementById('bowlingStatsChart').getContext('2d');
+                    if (bowlingChart) bowlingChart.destroy();
+                    bowlingChart = new Chart(ctx, { type: 'bar', data: { labels: stats.map((s, i) => `Match ${i + 1}`), datasets: [{ label: 'Wickets Taken', data: stats.map(s => s.wickets), backgroundColor: 'rgba(255, 99, 132, 0.6)' }] }, options: { scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } } });
+                } else { bowlingContainer.classList.add('hidden'); }
+            }
+            
+            // --- Best XI Page Logic ---
+            const addSquadPlayerBtn = document.getElementById('add-squad-player-btn');
+            let squad = new Set();
+            addSquadPlayerBtn.addEventListener('click', () => {
+                const squadPlayerInput = document.getElementById('squad-player-input');
+                const playerName = squadPlayerInput.value.trim();
+                if (playerName && squad.size < 30 && !squad.has(playerName)) {
+                    squad.add(playerName);
+                    renderSquadList();
+                    squadPlayerInput.value = '';
+                } else if (squad.size >= 30) { alert("Maximum squad size of 30 reached."); }
+            });
+            function renderSquadList() {
+                const squadListContainer = document.getElementById('squad-list-container');
+                squadListContainer.innerHTML = '';
+                squad.forEach(player => {
+                    const playerEl = document.createElement('div');
+                    playerEl.className = 'flex justify-between items-center bg-gray-600 p-2 rounded';
+                    playerEl.textContent = player;
+                    const removeBtn = document.createElement('button');
+                    removeBtn.textContent = '×';
+                    removeBtn.className = 'text-red-400 hover:text-red-300 font-bold text-xl';
+                    removeBtn.onclick = () => { squad.delete(player); renderSquadList(); };
+                    playerEl.appendChild(removeBtn);
+                    squadListContainer.appendChild(playerEl);
+                });
+            }
+            const best11Btn = document.getElementById('best11-btn');
+            
+            // --- THIS IS THE NEW/UPDATED PART FOR BEST 11 ---
+            best11Btn.addEventListener('click', () => {
+                const squadArray = Array.from(squad);
+                if (squadArray.length < 11) {
+                    alert("Please add at least 11 players to the squad.");
+                    return;
+                }
+                const payload = {
+                    squad: squadArray,
+                    venue: document.getElementById('best11_venue').value,
+                    opposition: document.getElementById('best11_opposition').value,
+                    match_format: document.getElementById('best11_match_format').value
+                };
+                const best11Spinner = document.getElementById('best11-spinner');
+                const best11List = document.getElementById('best11-list');
+                best11Spinner.classList.remove('hidden');
+                best11List.innerHTML = '';
+
+                fetch('/api/best11', { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload) 
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        best11List.innerHTML = `<p class="text-red-400 text-center">${data.error}</p>`;
+                        return;
+                    }
+                    if (Array.isArray(data)) {
+                        data.forEach(player => {
+                            const playerDiv = document.createElement('div');
+                            playerDiv.className = 'p-3 bg-gray-600 rounded-lg flex justify-between items-center';
+                            playerDiv.innerHTML = `
+                                <div>
+                                    <p class="font-bold text-white">${player.name}</p>
+                                    <p class="text-sm text-cyan-400">${player.role}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-xs text-gray-400">Runs: <span class="font-semibold text-gray-200">${player.runs_bin}</span></p>
+                                    <p class="text-xs text-gray-400">Wickets: <span class="font-semibold text-gray-200">${player.wickets_bin}</span></p>
+                                </div>
+                            `;
+                            best11List.appendChild(playerDiv);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error)
+                    best11List.innerHTML = `<p class="text-red-400 text-center">An error occurred while selecting the team.</p>`;
+                })
+                .finally(() => {
+                    best11Spinner.classList.add('hidden');
+                });
+            });
+
+
+            // --- General Setup (Unchanged) ---
+            const pages = document.querySelectorAll('.page');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const menuBtn = document.getElementById('menu-btn');
+            const sideMenu = document.getElementById('side-menu');
+            const menuOverlay = document.getElementById('menu-overlay');
+            const loginNavBtn = document.getElementById('login-nav-btn');
+            const loginOverlay = document.getElementById('login-overlay');
+            const closeLoginBtn = document.getElementById('close-login');
+            const toggleAuthBtn = document.getElementById('toggle-auth');
+            const homeTitleLink = document.getElementById('home-title-link');
+            const showPage = (pageId) => {
+                pages.forEach(page => page.id === pageId ? page.classList.remove('hidden') : page.classList.add('hidden'));
+                sideMenu.classList.add('-translate-x-full');
+                menuOverlay.classList.add('hidden');
+                if (pageId === 'history-page') { fetchHistory(); }
+            };
+            window.showPage = showPage;
+            navLinks.forEach(link => link.addEventListener('click', (e) => { e.preventDefault(); showPage(link.getAttribute('href').substring(1) + '-page'); }));
+            homeTitleLink.addEventListener('click', () => showPage('landing-page'));
+            menuBtn.addEventListener('click', () => { sideMenu.classList.toggle('-translate-x-full'); menuOverlay.classList.toggle('hidden'); });
+            menuOverlay.addEventListener('click', () => { sideMenu.classList.add('-translate-x-full'); menuOverlay.classList.add('hidden'); });
+            loginNavBtn.addEventListener('click', () => loginOverlay.classList.remove('hidden'));
+            closeLoginBtn.addEventListener('click', () => loginOverlay.classList.add('hidden'));
+            loginOverlay.addEventListener('click', (e) => { if (e.target === loginOverlay) loginOverlay.classList.add('hidden'); });
+            toggleAuthBtn.addEventListener('click', () => toggleAuthView());
+            showPage('landing-page');
+            checkAuthStatus();
+            fetch('/api/search_terms').then(response => response.json()).then(data => {
+                const fillDatalist = (datalist, items) => { items.forEach(item => { const option = document.createElement('option'); option.value = item; datalist.appendChild(option); }); };
+                fillDatalist(document.getElementById('player_list'), data.players);
+                fillDatalist(document.getElementById('venue_list'), data.venues);
+                fillDatalist(document.getElementById('team_list'), data.teams);
+            });
+        });
+    </script>
+</body>
+</html>
+
