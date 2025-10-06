@@ -3,12 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cricket Insights</title>
+    <title>Player Performance Predictor</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        /* Custom Styles for Cricket Theme and Translucency */
+        body {
+            font-family: 'Inter', sans-serif;
+            /* 1. Global Background Image (High-quality cricket field/stadium image) */
+            background-image: url('BG_project.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+
+        /* 2. Translucent Nav Bar with Blur */
+        .nav-translucent {
+            background-color: rgba(17, 24, 39, 0.8); /* gray-900 at 80% opacity */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(55, 65, 81, 0.5);
+        }
+        
+        /* 3. Enhanced Card Styling */
+        .glass-card {
+            background-color: rgba(31, 41, 55, 0.9); /* Darker gray/blue, slightly translucent */
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(75, 85, 99, 0.5); /* Subtle border */
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5), 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Standard Spinner */
         .spinner {
             border-top-color: #06b6d4; /* cyan-500 */
             animation: spin 1s linear infinite;
@@ -21,201 +48,217 @@
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+<body class="text-white min-h-screen flex flex-col">
 
-    <!-- Top Navigation Bar (Unchanged) -->
-    <nav class="bg-gray-800 shadow-lg sticky top-0 z-50">
+    <!-- Top Navigation Bar - Now Translucent (3) -->
+    <nav class="nav-translucent shadow-xl sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
-                    <button id="menu-btn" class="text-gray-300 hover:text-white focus:outline-none">
+                    <button id="menu-btn" class="text-gray-200 hover:text-cyan-300 focus:outline-none p-1 rounded-md transition duration-200">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
                         </svg>
                     </button>
-                    <span id="home-title-link" class="text-xl font-bold text-cyan-400 ml-4 cursor-pointer">Cricket Insights</span>
+                    <span id="home-title-link" class="text-2xl font-extrabold text-cyan-400 ml-4 cursor-pointer tracking-wider">Performance Predictor</span>
                 </div>
                 <div class="flex items-center">
-                    <button id="login-nav-btn" class="flex items-center text-gray-300 hover:text-white">
-                         <span id="user-greeting" class="hidden mr-2"></span>
-                        <svg class="h-8 w-8" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0012 11z" clip-rule="evenodd"></path></svg>
+                    <button id="login-nav-btn" class="flex items-center text-gray-200 hover:text-cyan-300 transition duration-200 p-2 rounded-lg">
+                         <span id="user-greeting" class="hidden mr-2 font-medium"></span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0012 11z" clip-rule="evenodd"></path></svg>
                         <span class="ml-2 font-medium" id="login-text">Login</span>
                     </button>
-                     <button id="logout-btn" class="hidden ml-4 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">Logout</button>
+                     <button id="logout-btn" class="hidden ml-4 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-xl transition duration-300 shadow-md hover:shadow-lg">Logout</button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Side Menu (Unchanged) -->
-    <div id="side-menu" class="fixed top-0 left-0 h-full w-64 bg-gray-800 shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out">
+    <!-- Side Menu - Styled with Glass Card (3) -->
+    <div id="side-menu" class="fixed top-0 left-0 h-full w-64 bg-gray-900 shadow-2xl z-50 transform -translate-x-full transition-transform duration-300 ease-in-out glass-card">
         <div class="p-4">
-            <h2 class="text-2xl font-bold text-cyan-400 border-b border-gray-700 pb-2">Menu</h2>
-            <ul class="mt-4 space-y-2">
-                <li><a href="#landing" class="nav-link block p-2 rounded-lg hover:bg-gray-700">Home</a></li>
-                <li><a href="#predictor" class="nav-link block p-2 rounded-lg hover:bg-gray-700">Performance Predictor</a></li>
-                <li><a href="#best11" class="nav-link block p-2 rounded-lg hover:bg-gray-700">Best Playing XI</a></li>
-                <li><a href="#history" id="history-link-mobile" class="nav-link block p-2 rounded-lg hover:bg-gray-700 hidden">Prediction History</a></li>
-                <li><a href="#about" class="nav-link block p-2 rounded-lg hover:bg-gray-700">About</a></li>
+            <h2 class="text-2xl font-extrabold text-cyan-400 border-b-2 border-cyan-700 pb-2">Menu</h2>
+            <ul class="mt-6 space-y-2">
+                <li><a href="#landing" class="nav-link block p-3 rounded-xl hover:bg-cyan-900/50 hover:text-cyan-300 transition duration-200 font-semibold">Home</a></li>
+                <li><a href="#predictor" class="nav-link block p-3 rounded-xl hover:bg-cyan-900/50 hover:text-cyan-300 transition duration-200 font-semibold">Performance Predictor</a></li>
+                <li><a href="#best11" class="nav-link block p-3 rounded-xl hover:bg-cyan-900/50 hover:text-cyan-300 transition duration-200 font-semibold">Best Playing XI</a></li>
+                <li><a href="#history" id="history-link-mobile" class="nav-link block p-3 rounded-xl hover:bg-cyan-900/50 hover:text-cyan-300 transition duration-200 font-semibold hidden">Prediction History</a></li>
+                <li><a href="#about" class="nav-link block p-3 rounded-xl hover:bg-cyan-900/50 hover:text-cyan-300 transition duration-200 font-semibold">About</a></li>
             </ul>
         </div>
     </div>
-    <div id="menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+    <div id="menu-overlay" class="fixed inset-0 bg-black bg-opacity-60 z-40 hidden"></div>
 
-    <!-- Main Content Area (Unchanged until Best XI Page) -->
-    <main class="flex-grow">
-        <section id="landing-page" class="page flex flex-col items-center justify-center text-center p-8 min-h-[calc(100vh-64px)] bg-cover bg-center" style="background-image: linear-gradient(rgba(17, 24, 39, 0.8), rgba(17, 24, 39, 0.8)), url('https://placehold.co/1200x800/111827/334155?text=Cricket+Stadium');">
-             <div class="max-w-4xl bg-gray-900 bg-opacity-50 p-8 rounded-2xl">
-                <h1 class="text-4xl md:text-5xl font-extrabold text-white">Predicting Cricket Player Performance</h1>
-                <p class="mt-4 text-md md:text-lg text-gray-300">Leverage advanced machine learning models to forecast player performance in upcoming matches. Make informed decisions with data-driven insights.</p>
-                <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-gray-800 p-6 rounded-lg text-left">
-                        <h2 class="text-2xl font-bold text-cyan-400">Player Performance Predictor</h2>
-                        <p class="mt-2 text-gray-400">Get detailed performance predictions for individual players, including batting average, strike rate, and bowling economy.</p>
-                        <button onclick="showPage('predictor-page')" class="mt-4 bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">Predict Now</button>
+    <!-- Main Content Area -->
+    <main class="flex-grow p-4">
+        <!-- Landing Page - Used subtle dark overlay over background image -->
+        <section id="landing-page" class="page flex flex-col items-center justify-center text-center min-h-[calc(100vh-80px)]">
+             <div class="max-w-4xl glass-card p-8 rounded-3xl border border-cyan-700/50">
+                <h1 class="text-4xl md:text-6xl font-extrabold text-cyan-400 drop-shadow-lg">Performance Predictor AI</h1>
+                <p class="mt-4 text-md md:text-xl text-gray-300 font-light">Leverage advanced machine learning models to forecast player performance in upcoming matches. Make informed decisions with data-driven insights.</p>
+                <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Enhanced Card 1 (3) -->
+                    <div class="bg-gray-800/70 hover:bg-gray-700/80 p-6 rounded-2xl text-left border border-cyan-500/30 transition duration-300 shadow-xl">
+                        <h2 class="text-2xl font-bold text-cyan-300">Player Performance Predictor</h2>
+                        <p class="mt-2 text-gray-400">Get detailed performance predictions for individual players, including runs and wickets bins.</p>
+                        <button onclick="showPage('predictor-page')" class="mt-4 bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2 px-4 rounded-xl transition duration-300 shadow-md shadow-cyan-900">Predict Now &rarr;</button>
                     </div>
-                     <div class="bg-gray-800 p-6 rounded-lg text-left">
-                        <h2 class="text-2xl font-bold text-cyan-400">Best Playing XI Chooser</h2>
-                        <p class="mt-2 text-gray-400">Optimize your team selection with our AI-powered tool that suggests the best possible playing 11 based on player performance predictions.</p>
-                        <button onclick="showPage('best11-page')" class="mt-4 bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">Choose Now</button>
+                     <!-- Enhanced Card 2 (3) -->
+                    <div class="bg-gray-800/70 hover:bg-gray-700/80 p-6 rounded-2xl text-left border border-cyan-500/30 transition duration-300 shadow-xl">
+                        <h2 class="text-2xl font-bold text-cyan-300">Best Playing XI Chooser</h2>
+                        <p class="mt-2 text-gray-400">Optimize your team selection with our AI-powered tool for the optimal playing 11.</p>
+                        <button onclick="showPage('best11-page')" class="mt-4 bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2 px-4 rounded-xl transition duration-300 shadow-md shadow-cyan-900">Choose Now &rarr;</button>
                     </div>
                 </div>
             </div>
         </section>
-        <section id="predictor-page" class="page hidden p-4 md:p-8 flex items-center justify-center min-h-[calc(100vh-64px)]">
-            <div class="w-full max-w-6xl bg-gray-800 rounded-2xl shadow-lg p-6 md:p-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+        <!-- Page: Performance Predictor - Enhanced Container and Elements (3) -->
+        <section id="predictor-page" class="page hidden flex items-center justify-center min-h-[calc(100vh-80px)]">
+            <div class="w-full max-w-6xl glass-card rounded-3xl p-6 md:p-10 grid grid-cols-1 lg:grid-cols-2 gap-8 shadow-2xl">
                 <div class="space-y-6">
                     <div class="text-center lg:text-left">
-                        <h1 class="text-3xl md:text-4xl font-bold text-cyan-400">Performance Predictor</h1>
-                        <p class="text-gray-400 mt-2">Fill in the details below to get a prediction.</p>
+                        <h1 class="text-4xl font-extrabold text-cyan-400 border-b pb-2 border-cyan-700/50">Performance Predictor</h1>
+                        <p class="text-gray-300 mt-3 text-lg">Input player and match details for an AI-driven forecast.</p>
                     </div>
-                    <div class="space-y-4">
+                    <div class="space-y-5">
+                        <!-- Input Fields Styling -->
                         <div>
-                            <label for="match_format" class="block text-sm font-medium text-gray-300 mb-1">Match Format</label>
-                            <select id="match_format" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500">
+                            <label for="match_format" class="block text-sm font-semibold text-cyan-300 mb-1">Match Format</label>
+                            <select id="match_format" class="w-full bg-gray-700/90 border border-cyan-600/50 text-white rounded-xl p-3 focus:ring-4 focus:ring-cyan-500 focus:border-cyan-500 transition duration-200 shadow-inner">
                                 <option value="T20">T20</option> <option value="ODI">ODI</option> <option value="Test">Test</option>
                             </select>
                         </div>
                         <div>
-                            <label for="player" class="block text-sm font-medium text-gray-300 mb-1">Player Name</label>
-                            <input type="text" id="player" list="player_list" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" placeholder="e.g., V Kohli">
+                            <label for="player" class="block text-sm font-semibold text-cyan-300 mb-1">Player Name</label>
+                            <input type="text" id="player" list="player_list" class="w-full bg-gray-700/90 border border-cyan-600/50 text-white rounded-xl p-3 focus:ring-4 focus:ring-cyan-500 focus:border-cyan-500 transition duration-200 shadow-inner" placeholder="e.g., V Kohli">
                             <datalist id="player_list"></datalist>
                         </div>
                         <div>
-                            <label for="venue" class="block text-sm font-medium text-gray-300 mb-1">Venue (Optional)</label>
-                            <input type="text" id="venue" list="venue_list" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" placeholder="e.g., Eden Gardens, Kolkata">
+                            <label for="venue" class="block text-sm font-semibold text-cyan-300 mb-1">Venue (Optional)</label>
+                            <input type="text" id="venue" list="venue_list" class="w-full bg-gray-700/90 border border-cyan-600/50 text-white rounded-xl p-3 focus:ring-4 focus:ring-cyan-500 focus:border-cyan-500 transition duration-200 shadow-inner" placeholder="e.g., Eden Gardens, Kolkata">
                             <datalist id="venue_list"></datalist>
                         </div>
                         <div>
-                            <label for="opposition" class="block text-sm font-medium text-gray-300 mb-1">Opposition Team (Optional)</label>
-                            <input type="text" id="opposition" list="team_list" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" placeholder="e.g., Australia">
+                            <label for="opposition" class="block text-sm font-semibold text-cyan-300 mb-1">Opposition Team (Optional)</label>
+                            <input type="text" id="opposition" list="team_list" class="w-full bg-gray-700/90 border border-cyan-600/50 text-white rounded-xl p-3 focus:ring-4 focus:ring-cyan-500 focus:border-cyan-500 transition duration-200 shadow-inner" placeholder="e.g., Australia">
                             <datalist id="team_list"></datalist>
                         </div>
                     </div>
-                    <button id="predict-btn" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 flex items-center justify-center"> Predict Performance </button>
+                    <button id="predict-btn" class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-lg font-extrabold py-3 px-4 rounded-xl transition duration-300 shadow-xl shadow-cyan-900/70 flex items-center justify-center transform hover:scale-[1.01]">
+                        Predict Performance
+                    </button>
                 </div>
                 <div class="space-y-6">
-                    <div id="results" class="text-center space-y-4 opacity-0 transition-opacity duration-500">
-                         <h2 class="text-2xl font-semibold text-gray-200">Prediction Result</h2>
+                    <div id="results" class="text-center space-y-4 opacity-0 transition-opacity duration-500 p-6 bg-gray-900/70 rounded-2xl shadow-inner border border-cyan-700/50">
+                         <h2 class="text-2xl font-bold text-cyan-300">Prediction Result</h2>
                          <div id="spinner" class="spinner w-8 h-8 rounded-full border-4 mx-auto hidden"></div>
                          <div id="result-content" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                             <div class="bg-gray-700 p-4 rounded-lg">
-                                 <h3 class="text-lg font-medium text-cyan-400">Predicted Runs Bin</h3>
-                                 <p id="runs-prediction" class="text-2xl font-bold mt-2">-</p>
+                             <!-- Prediction Result Cards Enhanced (3) -->
+                             <div class="bg-cyan-900/50 p-5 rounded-xl border border-cyan-400/50 shadow-lg">
+                                 <h3 class="text-lg font-medium text-cyan-200">Predicted Runs Bin</h3>
+                                 <p id="runs-prediction" class="text-3xl font-extrabold mt-2 text-white">-</p>
                              </div>
-                             <div class="bg-gray-700 p-4 rounded-lg">
-                                 <h3 class="text-lg font-medium text-cyan-400">Predicted Wickets Bin</h3>
-                                 <p id="wickets-prediction" class="text-2xl font-bold mt-2">-</p>
+                             <div class="bg-cyan-900/50 p-5 rounded-xl border border-cyan-400/50 shadow-lg">
+                                 <h3 class="text-lg font-medium text-cyan-200">Predicted Wickets Bin</h3>
+                                 <p id="wickets-prediction" class="text-3xl font-extrabold mt-2 text-white">-</p>
                              </div>
                          </div>
                     </div>
-                    <div id="batting-chart-container" class="bg-gray-700 p-4 rounded-lg hidden">
-                        <h3 class="text-lg font-medium text-center text-cyan-400 mb-4">Recent Batting Performance</h3>
+                    <!-- Chart Containers Enhanced (3) -->
+                    <div id="batting-chart-container" class="bg-gray-900/70 p-6 rounded-2xl shadow-inner hidden border border-gray-700/50">
+                        <h3 class="text-lg font-bold text-center text-cyan-300 mb-4">Recent Batting Performance</h3>
                         <canvas id="battingStatsChart"></canvas>
                     </div>
-                    <div id="bowling-chart-container" class="bg-gray-700 p-4 rounded-lg hidden">
-                        <h3 class="text-lg font-medium text-center text-cyan-400 mb-4">Recent Bowling Performance</h3>
+                    <div id="bowling-chart-container" class="bg-gray-900/70 p-6 rounded-2xl shadow-inner hidden border border-gray-700/50">
+                        <h3 class="text-lg font-bold text-center text-cyan-300 mb-4">Recent Bowling Performance</h3>
                         <canvas id="bowlingStatsChart"></canvas>
                     </div>
                 </div>
             </div>
         </section>
-        
-        <!-- Page: Best Playing XI -->
-        <section id="best11-page" class="page hidden p-4 md:p-8 flex items-center justify-center min-h-[calc(100vh-64px)]">
-             <div class="w-full max-w-6xl bg-gray-800 rounded-2xl shadow-lg p-6 md:p-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+        <!-- Page: Best Playing XI - Enhanced Container and Elements (3) -->
+        <section id="best11-page" class="page hidden flex items-center justify-center min-h-[calc(100vh-80px)]">
+             <div class="w-full max-w-6xl glass-card rounded-3xl p-6 md:p-10 grid grid-cols-1 lg:grid-cols-2 gap-8 shadow-2xl">
                  <div class="space-y-6">
                     <div class="text-center lg:text-left">
-                        <h1 class="text-3xl md:text-4xl font-bold text-cyan-400">Best Playing XI Selector</h1>
-                        <p class="text-gray-400 mt-2">Build your squad to find the optimal lineup.</p>
+                        <h1 class="text-4xl font-extrabold text-cyan-400 border-b pb-2 border-cyan-700/50">Best Playing XI Selector</h1>
+                        <p class="text-gray-300 mt-3 text-lg">Input your squad details to generate the optimal playing 11.</p>
                     </div>
                     <div class="space-y-2">
-                        <label for="squad-player-input" class="block text-sm font-medium text-gray-300">Add Player to Squad</label>
+                        <label for="squad-player-input" class="block text-sm font-semibold text-cyan-300">Add Player to Squad</label>
                         <div class="flex gap-2">
-                            <input type="text" id="squad-player-input" list="player_list" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-cyan-500" placeholder="Search and add up to 30 players">
-                            <button id="add-squad-player-btn" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-lg transition shrink-0">Add</button>
+                            <input type="text" id="squad-player-input" list="player_list" class="w-full bg-gray-700/90 border border-cyan-600/50 text-white rounded-xl p-3 focus:ring-4 focus:ring-cyan-500 shadow-inner" placeholder="Search and add up to 30 players">
+                            <button id="add-squad-player-btn" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-xl transition duration-300 shrink-0 shadow-md">Add</button>
                         </div>
                     </div>
-                    <div id="squad-list-container" class="bg-gray-700 rounded-lg p-4 space-y-2 h-48 overflow-y-auto"></div>
+                    <!-- Squad List Container Enhanced (3) -->
+                    <div id="squad-list-container" class="bg-gray-900/70 rounded-xl p-4 space-y-2 h-48 overflow-y-auto border border-gray-700/50 shadow-inner"></div>
                      <div class="space-y-4">
                         <div>
-                            <label for="best11_match_format" class="block text-sm font-medium text-gray-300 mb-1">Match Format</label>
-                            <select id="best11_match_format" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500">
+                            <label for="best11_match_format" class="block text-sm font-semibold text-cyan-300 mb-1">Match Format</label>
+                            <select id="best11_match_format" class="w-full bg-gray-700/90 border border-cyan-600/50 text-white rounded-xl p-3 focus:ring-4 focus:ring-cyan-500 shadow-inner">
                                 <option value="T20">T20</option> <option value="ODI">ODI</option> <option value="Test">Test</option>
                             </select>
                         </div>
-                        <label for="best11_venue" class="block text-sm font-medium text-gray-300">Venue (Optional)</label>
-                        <input type="text" id="best11_venue" list="venue_list" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-cyan-500" placeholder="e.g., Eden Gardens, Kolkata">
-                        <label for="best11_opposition" class="block text-sm font-medium text-gray-300 mt-2">Opposition Team (Optional)</label>
-                        <input type="text" id="best11_opposition" list="team_list" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-cyan-500" placeholder="e.g., Australia">
+                        <label for="best11_venue" class="block text-sm font-semibold text-cyan-300">Venue (Optional)</label>
+                        <input type="text" id="best11_venue" list="venue_list" class="w-full bg-gray-700/90 border border-cyan-600/50 text-white rounded-xl p-3 focus:ring-4 focus:ring-cyan-500 shadow-inner" placeholder="e.g., Eden Gardens, Kolkata">
+                        <label for="best11_opposition" class="block text-sm font-semibold text-cyan-300 mt-2">Opposition Team (Optional)</label>
+                        <input type="text" id="best11_opposition" list="team_list" class="w-full bg-gray-700/90 border border-cyan-600/50 text-white rounded-xl p-3 focus:ring-4 focus:ring-cyan-500 shadow-inner" placeholder="e.g., Australia">
                     </div>
-                    <button id="best11-btn" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-4 rounded-lg transition">Find Best XI</button>
+                    <button id="best11-btn" class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-lg font-extrabold py-3 px-4 rounded-xl transition duration-300 shadow-xl shadow-cyan-900/70 transform hover:scale-[1.01]">Find Best XI</button>
                  </div>
                  <div class="space-y-6 flex flex-col">
-                      <h2 class="text-2xl font-semibold text-gray-200 text-center">Your Optimal Team</h2>
+                      <h2 class="text-3xl font-bold text-cyan-300 text-center">Your Optimal Team</h2>
                       <div id="best11-spinner" class="spinner w-8 h-8 rounded-full border-4 mx-auto hidden"></div>
-                      <div id="best11-results" class="bg-gray-700 rounded-lg p-4 flex-grow">
-                          <!-- CHANGED THIS LINE: Replaced <ol> with <div> for better styling control -->
-                          <div id="best11-list" class="space-y-2 text-lg"></div>
+                      <!-- Best XI Results List Enhanced (3) -->
+                      <div id="best11-results" class="bg-gray-900/70 rounded-2xl p-6 flex-grow border border-gray-700/50 shadow-inner">
+                          <div id="best11-list" class="space-y-3 text-lg"></div>
                       </div>
                  </div>
              </div>
         </section>
-        <section id="about-page" class="page hidden p-4 md:p-8 flex items-center justify-center min-h-[calc(100vh-64px)]">
-             <div class="w-full max-w-3xl bg-gray-800 rounded-2xl shadow-lg p-6 md:p-8 space-y-6">
+
+        <!-- Page: About - Enhanced Container (3) -->
+        <section id="about-page" class="page hidden flex items-center justify-center min-h-[calc(100vh-80px)]">
+             <div class="w-full max-w-3xl glass-card rounded-3xl p-8 md:p-10 space-y-6 shadow-2xl">
                 <div class="text-center">
-                    <h1 class="text-3xl md:text-4xl font-bold text-cyan-400">About This Project</h1>
+                    <h1 class="text-4xl font-extrabold text-cyan-400 border-b pb-2 border-cyan-700/50">About This Project</h1>
                 </div>
                 <p class="text-gray-300 text-lg"> This Cricket Performance Predictor is a culmination of a passion for cricket and a deep dive into the world of machine learning. The goal of this project is to move beyond simple historical averages and create a more nuanced prediction tool that considers various factors influencing a player's performance. </p>
                  <p class="text-gray-300 text-lg"> The core of the application is powered by several machine learning models trained on extensive historical cricket data. These models analyze patterns related to player form, venue statistics, and opposition strength to forecast performance in terms of runs and wickets. </p>
                  <p class="text-gray-300 text-lg"> The "Best Playing XI" feature extends this predictive power, employing an algorithm to not only predict individual performances but also to assemble a balanced and potent team from a given squad. This is a college project aimed at exploring the practical applications of data science in sports analytics. </p>
             </div>
         </section>
-        <section id="history-page" class="page hidden p-4 md:p-8 flex items-center justify-center min-h-[calc(100vh-64px)]">
-            <div class="w-full max-w-4xl bg-gray-800 rounded-2xl shadow-lg p-6 md:p-8 space-y-6">
+        
+        <!-- Page: History - Enhanced Container and Elements (3) -->
+        <section id="history-page" class="page hidden flex items-center justify-center min-h-[calc(100vh-80px)]">
+            <div class="w-full max-w-4xl glass-card rounded-3xl p-8 md:p-10 space-y-6 shadow-2xl">
                 <div class="text-center">
-                    <h1 class="text-3xl md:text-4xl font-bold text-cyan-400">Prediction History</h1>
-                    <p class="text-gray-400 mt-2">Your recent predictions are saved here.</p>
+                    <h1 class="text-4xl font-extrabold text-cyan-400 border-b pb-2 border-cyan-700/50">Prediction History</h1>
+                    <p class="text-gray-300 mt-3 text-lg">Your recent predictions are saved here (Login required).</p>
                 </div>
+                <!-- History Container Enhanced (3) -->
                 <div id="history-container" class="space-y-4"></div>
             </div>
         </section>
     </main>
 
-    <!-- Login/Signup Overlay (Unchanged) -->
-    <div id="login-overlay" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden">
-        <div class="bg-gray-800 p-8 rounded-2xl shadow-lg w-full max-w-sm relative">
-            <button id="close-login" class="absolute top-4 right-4 text-gray-400 hover:text-white">&times;</button>
-            <h2 id="login-title" class="text-2xl font-bold text-center text-cyan-400 mb-6">Login</h2>
-            <div id="auth-error" class="text-red-400 text-center mb-4 hidden"></div>
+    <!-- Login/Signup Overlay - Enhanced Card (3) -->
+    <div id="login-overlay" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 hidden">
+        <div class="bg-gray-900/90 glass-card p-8 rounded-3xl shadow-2xl w-full max-w-sm relative border border-cyan-700/50">
+            <button id="close-login" class="absolute top-4 right-4 text-gray-400 hover:text-cyan-300 text-2xl font-bold transition">&times;</button>
+            <h2 id="login-title" class="text-3xl font-extrabold text-center text-cyan-400 mb-6">Login</h2>
+            <div id="auth-error" class="text-red-400 text-center mb-4 hidden bg-red-900/30 p-2 rounded-lg"></div>
             <form id="login-form" class="space-y-4">
-                <input type="email" id="email" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-cyan-500" placeholder="Email" required>
-                <input type="password" id="password" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-cyan-500" placeholder="Password" required>
-                <button type="submit" id="auth-submit-btn" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 rounded-lg transition">Login</button>
+                <input type="email" id="email" class="w-full bg-gray-700/90 border border-cyan-600/50 text-white rounded-xl p-3 focus:ring-4 focus:ring-cyan-500 shadow-inner" placeholder="Email" required>
+                <input type="password" id="password" class="w-full bg-gray-700/90 border border-cyan-600/50 text-white rounded-xl p-3 focus:ring-4 focus:ring-cyan-500 shadow-inner" placeholder="Password" required>
+                <button type="submit" id="auth-submit-btn" class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-extrabold py-3 rounded-xl transition shadow-lg shadow-cyan-900/70">Login</button>
             </form>
             <p class="text-center text-sm text-gray-400 mt-4">
                 <span id="login-prompt">Don't have an account?</span>
-                <button id="toggle-auth" class="text-cyan-400 hover:underline">Sign Up</button>
+                <button id="toggle-auth" class="text-cyan-400 font-semibold hover:text-cyan-300 transition duration-200">Sign Up</button>
             </p>
         </div>
     </div>
@@ -227,7 +270,7 @@
             let bowlingChart = null;
             let isLogin = true;
 
-            // --- AUTHENTICATION (Unchanged) ---
+            // --- AUTHENTICATION (Functionality Unchanged) ---
             const loginForm = document.getElementById('login-form');
             const authError = document.getElementById('auth-error');
             const logoutBtn = document.getElementById('logout-btn');
@@ -242,14 +285,25 @@
                 .then(data => {
                     if (data.success) {
                         if (isLogin) { updateUIAfterLogin(email); } 
-                        else { alert('Registration successful! Please log in.'); toggleAuthView(true); }
+                        else { 
+                            // Replaced alert() with a custom message display in the form area
+                            authError.textContent = 'Registration successful! Please log in.'; 
+                            authError.classList.remove('hidden'); 
+                            authError.classList.remove('text-red-400');
+                            authError.classList.add('text-green-400', 'bg-green-900/30');
+                            toggleAuthView(true); 
+                        }
                     } else {
                         authError.textContent = data.message;
                         authError.classList.remove('hidden');
+                        authError.classList.add('text-red-400', 'bg-red-900/30');
+                        authError.classList.remove('text-green-400', 'bg-green-900/30');
                     }
                 }).catch(err => {
-                    authError.textContent = 'An error occurred. Please try again.';
+                    authError.textContent = 'A network error occurred. Please try again.';
                     authError.classList.remove('hidden');
+                    authError.classList.add('text-red-400', 'bg-red-900/30');
+                    authError.classList.remove('text-green-400', 'bg-green-900/30');
                 });
             });
             logoutBtn.addEventListener('click', () => { fetch('/api/logout', { method: 'POST' }).then(() => updateUIAfterLogout()); });
@@ -276,9 +330,11 @@
                  document.getElementById('login-prompt').textContent = isLogin ? "Don't have an account?" : "Already have an account?";
                  document.getElementById('toggle-auth').textContent = isLogin ? 'Sign Up' : 'Login';
                  document.getElementById('auth-error').classList.add('hidden');
+                 document.getElementById('auth-error').classList.remove('text-green-400', 'bg-green-900/30');
+                 document.getElementById('auth-error').classList.remove('text-red-400', 'bg-red-900/30');
             }
 
-            // --- HISTORY (Unchanged) ---
+            // --- HISTORY (Functionality Unchanged, UI Enhanced) ---
             function fetchHistory() {
                 const historyContainer = document.getElementById('history-container');
                 historyContainer.innerHTML = '<div class="spinner w-8 h-8 rounded-full border-4 mx-auto"></div>';
@@ -287,14 +343,15 @@
                     if (data.success && data.history.length > 0) {
                         data.history.forEach(item => {
                             const date = new Date(item.timestamp).toLocaleString();
-                            const historyItemHTML = `<div class="bg-gray-700 p-4 rounded-lg"><p class="font-bold text-lg">${item.player} <span class="text-sm font-normal text-gray-400">- ${date}</span></p><p>vs ${item.opposition || 'N/A'} at ${item.venue || 'N/A'} (${item.match_format})</p><div class="flex gap-4 mt-2"><p>Runs: <span class="font-bold text-cyan-400">${item.predicted_runs_bin}</span></p><p>Wickets: <span class="font-bold text-cyan-400">${item.predicted_wickets_bin}</span></p></div></div>`;
+                            // Enhanced UI for history items
+                            const historyItemHTML = `<div class="bg-gray-700/70 p-4 rounded-xl border border-cyan-800 shadow-md transition duration-200 hover:bg-gray-700/90"><p class="font-bold text-xl text-cyan-300">${item.player} <span class="text-sm font-normal text-gray-400 float-right mt-1">${date}</span></p><p class="text-gray-400 mt-1">vs ${item.opposition || 'N/A'} at ${item.venue || 'N/A'} (${item.match_format})</p><div class="flex gap-6 mt-3 text-lg"><p>Runs: <span class="font-extrabold text-cyan-400">${item.predicted_runs_bin}</span></p><p>Wickets: <span class="font-extrabold text-cyan-400">${item.predicted_wickets_bin}</span></p></div></div>`;
                             historyContainer.innerHTML += historyItemHTML;
                         });
-                    } else { historyContainer.innerHTML = '<p class="text-gray-400 text-center">No history found.</p>'; }
-                }).catch(err => { historyContainer.innerHTML = '<p class="text-red-400 text-center">Could not load history.</p>'; });
+                    } else { historyContainer.innerHTML = '<p class="text-gray-400 text-center p-4">No prediction history found. Log in to save your predictions.</p>'; }
+                }).catch(err => { historyContainer.innerHTML = '<p class="text-red-400 text-center p-4">Could not load history due to a server error.</p>'; });
             }
 
-            // --- Predictor Page Logic (Unchanged) ---
+            // --- Predictor Page Logic (Functionality Unchanged) ---
             const predictBtn = document.getElementById('predict-btn');
             predictBtn.addEventListener('click', () => {
                 const payload = { match_format: document.getElementById('match_format').value, player: document.getElementById('player').value, venue: document.getElementById('venue').value, opposition: document.getElementById('opposition').value, };
@@ -329,51 +386,78 @@
                     battingContainer.classList.remove('hidden');
                     const ctx = document.getElementById('battingStatsChart').getContext('2d');
                     if (battingChart) battingChart.destroy();
-                    battingChart = new Chart(ctx, { type: 'bar', data: { labels: stats.map((s, i) => `Match ${i + 1}`), datasets: [{ label: 'Runs Scored', data: stats.map(s => s.runs), backgroundColor: 'rgba(54, 162, 235, 0.6)' }] }, options: { scales: { y: { beginAtZero: true } } } });
+                    battingChart = new Chart(ctx, { type: 'bar', data: { labels: stats.map((s, i) => `Match ${i + 1}`), datasets: [{ label: 'Runs Scored', data: stats.map(s => s.runs), backgroundColor: 'rgba(6, 182, 212, 0.8)' /* cyan-500 */, borderColor: '#06b6d4', borderWidth: 1 }] }, options: { scales: { y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.1)' } }, x: { grid: { color: 'rgba(255, 255, 255, 0.1)' } } }, plugins: { legend: { labels: { color: '#e2e8f0' /* gray-200 */ } } } } });
                 } else { battingContainer.classList.add('hidden'); }
                 const bowlingContainer = document.getElementById('bowling-chart-container');
                  if (hasBowlingStats) {
                     bowlingContainer.classList.remove('hidden');
                     const ctx = document.getElementById('bowlingStatsChart').getContext('2d');
                     if (bowlingChart) bowlingChart.destroy();
-                    bowlingChart = new Chart(ctx, { type: 'bar', data: { labels: stats.map((s, i) => `Match ${i + 1}`), datasets: [{ label: 'Wickets Taken', data: stats.map(s => s.wickets), backgroundColor: 'rgba(255, 99, 132, 0.6)' }] }, options: { scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } } });
+                    bowlingChart = new Chart(ctx, { type: 'bar', data: { labels: stats.map((s, i) => `Match ${i + 1}`), datasets: [{ label: 'Wickets Taken', data: stats.map(s => s.wickets), backgroundColor: 'rgba(255, 99, 132, 0.8)' /* red/pink */, borderColor: '#ef4444', borderWidth: 1 }] }, options: { scales: { y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: 'rgba(255, 255, 255, 0.1)' } }, x: { grid: { color: 'rgba(255, 255, 255, 0.1)' } } }, plugins: { legend: { labels: { color: '#e2e8f0' /* gray-200 */ } } } } });
                 } else { bowlingContainer.classList.add('hidden'); }
             }
             
-            // --- Best XI Page Logic ---
+            // --- Best XI Page Logic (Functionality Unchanged) ---
             const addSquadPlayerBtn = document.getElementById('add-squad-player-btn');
             let squad = new Set();
             addSquadPlayerBtn.addEventListener('click', () => {
                 const squadPlayerInput = document.getElementById('squad-player-input');
                 const playerName = squadPlayerInput.value.trim();
+                const playerDatalist = document.getElementById('player_list');
+                
+                // Simple validation to check if player is in the known list (optional, but good practice)
+                const isValidPlayer = Array.from(playerDatalist.options).some(opt => opt.value === playerName);
+
                 if (playerName && squad.size < 30 && !squad.has(playerName)) {
                     squad.add(playerName);
                     renderSquadList();
                     squadPlayerInput.value = '';
-                } else if (squad.size >= 30) { alert("Maximum squad size of 30 reached."); }
+                } else if (squad.has(playerName)) {
+                    // Replaced alert
+                    showTemporaryMessage("Player is already in the squad.", 'squad-player-input', 'red');
+                } else if (squad.size >= 30) { 
+                    // Replaced alert
+                    showTemporaryMessage("Maximum squad size of 30 reached.", 'squad-player-input', 'red');
+                } 
             });
+
+            function showTemporaryMessage(message, elementId, type) {
+                const element = document.getElementById(elementId);
+                const originalPlaceholder = element.placeholder;
+                const originalClasses = element.className;
+                
+                element.placeholder = message;
+                element.className = `w-full text-white rounded-xl p-3 shadow-inner transition duration-500 ${type === 'red' ? 'bg-red-900/50 border border-red-500' : 'bg-green-900/50 border border-green-500'}`;
+
+                setTimeout(() => {
+                    element.placeholder = originalPlaceholder;
+                    element.className = originalClasses;
+                }, 2000);
+            }
+
             function renderSquadList() {
                 const squadListContainer = document.getElementById('squad-list-container');
                 squadListContainer.innerHTML = '';
                 squad.forEach(player => {
                     const playerEl = document.createElement('div');
-                    playerEl.className = 'flex justify-between items-center bg-gray-600 p-2 rounded';
-                    playerEl.textContent = player;
+                    // Enhanced squad list item UI
+                    playerEl.className = 'flex justify-between items-center bg-gray-700/80 p-3 rounded-lg border border-gray-600 transition duration-200 hover:bg-gray-600/90';
+                    playerEl.innerHTML = `<span class="font-medium text-white">${player}</span>`;
                     const removeBtn = document.createElement('button');
-                    removeBtn.textContent = '×';
-                    removeBtn.className = 'text-red-400 hover:text-red-300 font-bold text-xl';
+                    removeBtn.textContent = 'Remove';
+                    removeBtn.className = 'text-red-400 hover:text-red-300 font-semibold text-sm bg-red-900/50 px-2 py-1 rounded-md transition duration-200';
                     removeBtn.onclick = () => { squad.delete(player); renderSquadList(); };
                     playerEl.appendChild(removeBtn);
                     squadListContainer.appendChild(playerEl);
                 });
             }
-            const best11Btn = document.getElementById('best11-btn');
             
-            // --- THIS IS THE NEW/UPDATED PART FOR BEST 11 ---
+            const best11Btn = document.getElementById('best11-btn');
             best11Btn.addEventListener('click', () => {
                 const squadArray = Array.from(squad);
                 if (squadArray.length < 11) {
-                    alert("Please add at least 11 players to the squad.");
+                    // Replaced alert
+                    showTemporaryMessage("Please add at least 11 players to the squad.", 'best11_opposition', 'red');
                     return;
                 }
                 const payload = {
@@ -395,17 +479,21 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
-                        best11List.innerHTML = `<p class="text-red-400 text-center">${data.error}</p>`;
+                        best11List.innerHTML = `<p class="text-red-400 text-center p-4">${data.error}</p>`;
                         return;
                     }
                     if (Array.isArray(data)) {
-                        data.forEach(player => {
+                        data.forEach((player, index) => {
                             const playerDiv = document.createElement('div');
-                            playerDiv.className = 'p-3 bg-gray-600 rounded-lg flex justify-between items-center';
+                            // Enhanced Best XI result item UI
+                            playerDiv.className = 'p-3 bg-gray-700/70 rounded-xl flex justify-between items-center border border-cyan-800 shadow-lg';
                             playerDiv.innerHTML = `
-                                <div>
-                                    <p class="font-bold text-white">${player.name}</p>
-                                    <p class="text-sm text-cyan-400">${player.role}</p>
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-xl font-extrabold text-cyan-400">${index + 1}.</span>
+                                    <div>
+                                        <p class="font-bold text-white text-lg">${player.name}</p>
+                                        <p class="text-sm text-cyan-300 font-medium">${player.role}</p>
+                                    </div>
                                 </div>
                                 <div class="text-right">
                                     <p class="text-xs text-gray-400">Runs: <span class="font-semibold text-gray-200">${player.runs_bin}</span></p>
@@ -418,7 +506,7 @@
                 })
                 .catch(error => {
                     console.error('Error:', error)
-                    best11List.innerHTML = `<p class="text-red-400 text-center">An error occurred while selecting the team.</p>`;
+                    best11List.innerHTML = `<p class="text-red-400 text-center p-4">An error occurred while selecting the team.</p>`;
                 })
                 .finally(() => {
                     best11Spinner.classList.add('hidden');
@@ -426,7 +514,7 @@
             });
 
 
-            // --- General Setup (Unchanged) ---
+            // --- General Setup (Functionality Unchanged) ---
             const pages = document.querySelectorAll('.page');
             const navLinks = document.querySelectorAll('.nav-link');
             const menuBtn = document.getElementById('menu-btn');
@@ -452,8 +540,12 @@
             closeLoginBtn.addEventListener('click', () => loginOverlay.classList.add('hidden'));
             loginOverlay.addEventListener('click', (e) => { if (e.target === loginOverlay) loginOverlay.classList.add('hidden'); });
             toggleAuthBtn.addEventListener('click', () => toggleAuthView());
+            
+            // Initial setup
             showPage('landing-page');
             checkAuthStatus();
+            
+            // Fetch search terms and populate datalists
             fetch('/api/search_terms').then(response => response.json()).then(data => {
                 const fillDatalist = (datalist, items) => { items.forEach(item => { const option = document.createElement('option'); option.value = item; datalist.appendChild(option); }); };
                 fillDatalist(document.getElementById('player_list'), data.players);
@@ -464,4 +556,3 @@
     </script>
 </body>
 </html>
-
