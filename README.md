@@ -1,25 +1,28 @@
 Player Performance Predictor and Optimal XI Recommender
-Overview
+1. Overview
 
 Player Performance Predictor is a data-driven machine learning system designed to predict cricket player performance under specific match conditions and recommend an optimal playing XI using contextual analytics and constrained optimization.
 
-The project addresses a key limitation of traditional sports analytics: reliance on historical averages and subjective judgment. Instead, it uses context-aware machine learning models trained on ball-by-ball data to generate probabilistic performance ranges and translate them into actionable selection decisions.
+The project addresses a major limitation of traditional sports analytics: reliance on historical averages and subjective judgment. Instead, it uses context-aware machine learning models trained on ball-by-ball data to generate probabilistic performance ranges and translate them into actionable selection decisions.
 
 This project was developed as a final year B.Sc. Computer Science capstone project and demonstrates end-to-end implementation of data engineering, machine learning, backend development, and algorithmic optimization.
 
-Problem Statement
+2. Problem Statement
 
-Player selection in cricket is often influenced by:
+Player selection in cricket is often influenced by the following limitations:
 
 Career averages without context
+Traditional metrics ignore venue, opposition, and match conditions.
 
-Recent performance bias
+Recency bias
+Selection decisions overvalue the most recent match.
 
-Human intuition and subjective judgment
+Subjective intuition
+Human judgment introduces inconsistency and bias.
 
-These approaches fail to consider:
+These approaches fail to adequately consider:
 
-Venue-specific performance
+Venue-specific performance history
 
 Opposition-specific matchups
 
@@ -27,53 +30,70 @@ Short-term form trends
 
 Role balance within a team
 
-This project aims to replace subjective selection with a repeatable, explainable, and data-driven system.
+The goal of this project is to replace subjective selection with a repeatable, explainable, and data-driven system.
 
-Key Objectives
+3. Project Objectives
 
-Predict individual player performance using contextual machine learning
+The core objectives of this project are:
 
-Handle high variance and class imbalance in sports data
+Contextual prediction
+Predict individual player performance using match-specific features.
 
-Provide stable, interpretable predictions suitable for decision-making
+Variance handling
+Address the high volatility and class imbalance inherent in sports data.
 
-Recommend a role-balanced optimal XI based on predicted impact
+Decision stability
+Provide interpretable predictions suitable for real-world selection decisions.
 
-Core Features
-Player Performance Prediction
+Team optimization
+Recommend a role-balanced optimal playing XI using quantitative impact scoring.
 
-Predicts runs range and wickets range
+4. Core Features
+4.1 Player Performance Prediction
 
-Separate models for:
+This module provides context-aware performance forecasts with the following characteristics:
+
+Output format
+Performance is predicted as runs and wickets ranges (categorical bins).
+
+Model separation
+Independent models are used for:
 
 Batting and Bowling
 
 T20, ODI, and Test formats
 
-Predictions are returned as categorical bins instead of exact values to improve reliability
+Stability over precision
+Classification-based predictions are preferred over fragile point estimates.
 
-Contextual Feature Engineering
+4.2 Contextual Feature Engineering
 
-Models incorporate:
+The predictive models incorporate the following feature groups:
 
-Player form over last 10 matches
+Recent form metrics
+Player performance over the last 10 matches.
 
-Venue-specific historical performance
+Venue history
+Ground-specific historical performance.
 
-Opposition-specific performance
+Opposition matchups
+Player effectiveness against specific teams.
 
-Career statistics (format-wise)
+Career aggregates
+Format-wise career statistics.
 
-Optimal XI Recommendation
+4.3 Optimal XI Recommendation System
 
-Converts predictions into a quantitative Impact Score
+The Optimal XI module converts individual predictions into team-level decisions:
 
-Weighted scoring formula:
+Impact scoring
+Each player is assigned a weighted impact score using:
 
 Impact Score = Runs Score + (Wickets Score × 25)
 
 
-Applies role-based constraints to ensure:
+Role-based constraints
+Selection logic enforces:
 
 Adequate batting depth
 
@@ -81,81 +101,91 @@ Sufficient bowling options
 
 Inclusion of all-rounders
 
-Produces a balanced and match-ready playing XI
+The output is a balanced, match-ready playing XI.
 
-Web Application
+4.4 Web Application
 
-Interactive web interface
+The system is exposed through a web application with the following capabilities:
+
+Interactive interface
+Allows users to input match context and view predictions.
 
 User authentication
+Secure login and session management.
 
-Prediction history tracking
+Prediction history
+Persistent storage of past predictions.
 
-End-to-end ML inference via REST APIs
+API-driven inference
+ML models are accessed via REST endpoints.
 
-Machine Learning Approach
+5. Machine Learning Approach
+5.1 Model Design
 
-Algorithm: Random Forest Classifier
+Algorithm used
+Random Forest Classifier.
 
-Models:
+Model count
+Six independent models:
 
-6 independent models
+Batting and Bowling × T20 / ODI / Test.
 
-Batting and Bowling × T20 / ODI / Test
+5.2 Dataset
 
-Dataset:
+Data volume
+Approximately 20,000 ball-by-ball match records.
 
-Approximately 20,000 ball-by-ball match records
+Processing
+Raw data transformed into structured, feature-rich datasets.
 
-Target:
+5.3 Prediction Strategy
 
-Performance bins (classification)
+Target type
+Categorical performance bins.
 
-Imbalance Handling:
+Class imbalance handling
+Managed using:
 
 class_weight = balanced
 
-Model Accuracy
+5.4 Model Performance
 Format	Batting Accuracy	Bowling Accuracy
 Test	59.43%	73.19%
 ODI	64.74%	66.39%
 T20	60.70%	72.97%
 
-Bowling models consistently outperform batting models due to lower variance and stronger dependency on contextual factors.
+Bowling models consistently outperform batting models due to lower variance and stronger dependence on contextual factors.
 
-System Architecture
+6. System Architecture
+Backend
 
-Backend:
+Language: Python
 
-Python
+Framework: Flask (REST APIs)
 
-Flask (REST APIs)
+ML Library: Scikit-learn
 
-Scikit-learn (ML inference)
+Database: SQLite
 
-SQLite (persistent storage)
+Model Storage: Joblib
 
-Joblib (model serialization)
+Frontend
 
-Frontend:
+Markup: HTML5
 
-HTML5
+Styling: Tailwind CSS
 
-Tailwind CSS
+Scripting: JavaScript
 
-JavaScript
+Visualization: Chart.js
 
-Chart.js for visualization
+Data Processing
 
-Data Processing:
+Libraries: Pandas, NumPy
 
-Pandas
+Pipeline: Custom feature engineering workflows
 
-NumPy
-
-Custom feature engineering pipelines
-
-Project Structure
+7. Project Structure
 ├── app.py                 # Flask backend
 ├── models/                # Trained ML models (.joblib)
 ├── data/                  # SQLite database
@@ -165,67 +195,64 @@ Project Structure
 ├── requirements.txt
 └── README.md
 
-How to Run Locally
-
-Clone the repository:
-
+8. Running the Project Locally
+Step 1: Clone the Repository
 git clone https://github.com/your-username/player-performance-predictor.git
 cd player-performance-predictor
 
-
-Install dependencies:
-
+Step 2: Install Dependencies
 pip install -r requirements.txt
 
-
-Start the application:
-
+Step 3: Start the Application
 python app.py
 
-
-Access in browser:
-
+Step 4: Access the Application
 http://127.0.0.1:5000
 
-Technical Highlights
+9. Technical Highlights
 
-Complete end-to-end machine learning pipeline from raw data to deployed inference
+End-to-end ML pipeline
+From raw data ingestion to deployed inference.
 
-Practical handling of class imbalance without memory-intensive oversampling
+Efficient imbalance handling
+Avoids memory-intensive oversampling techniques.
 
-Clear separation between prediction (machine learning) and decision-making (optimization)
+Separation of concerns
+Clear distinction between prediction and optimization layers.
 
-Scalable backend architecture suitable for API-driven systems
+Scalable architecture
+Designed for API-based and cloud-ready systems.
 
-Focus on interpretability and stability over fragile point predictions
+Interpretability-first approach
+Prioritizes stable decision-making over volatile precision.
 
-Applicability Beyond Sports
+10. Applicability Beyond Sports
 
-Although implemented for cricket analytics, the system architecture and methodology are directly applicable to:
+The underlying architecture and methodology are transferable to:
 
 FinTech risk scoring systems
 
 Fraud and anomaly detection
 
-User behavior and churn prediction
+User behavior modeling
 
 Decision support systems
 
 Context-aware recommendation engines
 
-Future Scope
+11. Future Enhancements
 
-Live data ingestion via APIs
+Live data ingestion via external APIs
 
-Additional contextual features such as pitch and weather
+Additional contextual features (pitch, weather, toss)
 
-Ensemble modeling approaches
+Ensemble modeling strategies
 
 Cloud deployment (AWS / GCP)
 
-Probability distribution visualization instead of single-bin output
+Probabilistic output visualization
 
-Author
+12. Author
 
 Aman Chitranjan Singh
 B.Sc. Computer Science
